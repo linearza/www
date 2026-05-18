@@ -11,6 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="style.css" />
     <title>Linear — Staff Engineer</title>
   </head>
@@ -31,12 +32,163 @@
       </a>
     </main>
 
+    <div class="section-divider" aria-hidden="true"></div>
+
+    <!-- PROJECTS -->
+    <section class="section section--alt" id="projects" aria-label="Projects">
+      <div class="container">
+        <p class="section-label">// projects</p>
+        <h2 class="neon-underline">What I'm working on</h2>
+
+        <div class="project-list" id="project-list" aria-live="polite">
+          <span class="tag">Loading…</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider section-divider--flip" aria-hidden="true"></div>
+
+    <!-- GITHUB STARS -->
+    <section class="section" id="stars" aria-label="GitHub stars">
+      <div class="container">
+        <p class="section-label">// github stars</p>
+        <h2 class="neon-underline">What I'm looking at</h2>
+        <p class="section-intro">Repos I've starred recently, fetched live from the GitHub API.</p>
+
+        <ul class="stars-grid" id="stars-grid" aria-live="polite">
+          <li><span class="tag">Loading…</span></li>
+        </ul>
+
+        <a
+          href="https://github.com/linearza?tab=stars"
+          class="external-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >See all on GitHub →</a>
+      </div>
+    </section>
+
     <script src="canvas.js"></script>
     <script>
       (function () {
         const parts = ["hello", "@", "linear", ".", "co", ".", "za"];
         const btn = document.getElementById("contact-btn");
         btn.href = "mailto:" + parts.join("");
+      })();
+    </script>
+    <script>
+      (function () {
+        var list = document.getElementById("project-list");
+        fetch("/api/repos")
+          .then(function (res) {
+            return res.ok ? res.json() : Promise.reject();
+          })
+          .then(function (data) {
+            var EXCLUDE = ['www', 'profile', 'linearza', 'linearza.github.io'];
+            var repos = data.filter(function (r) {
+              return !r.fork && !r.archived && EXCLUDE.indexOf(r.name) === -1;
+            }).slice(0, 6);
+            if (!repos.length) {
+              list.innerHTML = '<span class="tag">No repos found.</span>';
+              return;
+            }
+            list.innerHTML = repos
+              .map(function (r) {
+                var desc = r.description
+                  ? "<p>" +
+                    r.description
+                      .replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;") +
+                    "</p>"
+                  : "";
+                var tags = r.topics && r.topics.length
+                  ? r.topics
+                  : (r.language ? [r.language] : []);
+                var tagHtml = tags.length
+                  ? '<ul class="tag-list" aria-label="Tech used">' +
+                    tags.map(function (t) {
+                      return '<li><span class="tag tag--cyan">' + t + '</span></li>';
+                    }).join('') +
+                    '</ul>'
+                  : '';
+                var badge = r.private
+                  ? '<span class="repo-badge repo-badge--private">private</span>'
+                  : '<span class="repo-badge repo-badge--public">public</span>';
+                var links =
+                  '<div class="project-card__links">' +
+                  (r.homepage
+                    ? '<a href="' + r.homepage + '" class="project-card__link project-card__link--site" target="_blank" rel="noopener noreferrer" aria-label="Visit site">↗ site</a>'
+                    : '') +
+                  '<a href="' + r.html_url + '" class="project-card__link" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub">gh</a>' +
+                  '</div>';
+                return (
+                  '<article class="project-card">' +
+                  '<div class="project-card__header">' +
+                  '<div class="project-card__title">' +
+                  '<h3>' + r.name + '</h3>' +
+                  badge +
+                  '</div>' +
+                  links +
+                  '</div>' +
+                  desc +
+                  tagHtml +
+                  '</article>'
+                );
+              })
+              .join("");
+          })
+          .catch(function () {
+            list.innerHTML = '<span class="tag">Projects not available.</span>';
+          });
+      })();
+    </script>
+    <script>
+      (function () {
+        var grid = document.getElementById("stars-grid");
+        fetch("/api/stars")
+          .then(function (res) {
+            return res.ok ? res.json() : Promise.reject();
+          })
+          .then(function (data) {
+            if (!data.length) {
+              grid.innerHTML = '<li><span class="tag">No stars found.</span></li>';
+              return;
+            }
+            grid.innerHTML = data
+              .map(function (r) {
+                var desc = r.description
+                  ? '<p class="star-card__desc">' +
+                    r.description.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") +
+                    "</p>"
+                  : "";
+                var lang = r.language
+                  ? '<span class="star-card__lang">' + r.language + "</span>"
+                  : "";
+                return (
+                  '<li><a href="' +
+                  r.html_url +
+                  '" class="star-card" target="_blank" rel="noopener noreferrer">' +
+                  '<div class="star-card__header">' +
+                  '<span class="star-card__name">' +
+                  r.full_name +
+                  "</span>" +
+                  '<span class="star-card__count" aria-label="' +
+                  r.stargazers_count +
+                  ' stars">★ ' +
+                  r.stargazers_count.toLocaleString() +
+                  "</span>" +
+                  "</div>" +
+                  desc +
+                  lang +
+                  "</a></li>"
+                );
+              })
+              .join("");
+          })
+          .catch(function () {
+            grid.innerHTML = '<li><span class="tag">Stars not available.</span></li>';
+          });
       })();
     </script>
   </body>
