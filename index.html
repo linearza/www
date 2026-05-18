@@ -14,7 +14,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <script>
       (function () {
-        var t = localStorage.getItem("theme") || "operator";
+        var t = localStorage.getItem("theme") || "neon";
         if (t !== "neon") document.documentElement.setAttribute("data-theme", t);
       })();
     </script>
@@ -33,10 +33,10 @@
         </svg>
       </button>
       <ul class="theme-picker__menu" role="listbox" aria-label="Color theme" hidden>
-        <li role="option" class="theme-option" data-theme="neon"     aria-selected="false">
+        <li role="option" class="theme-option" data-theme="neon"     aria-selected="true">
           <span class="theme-option__dot" data-dot="neon"></span>NEON GRID
         </li>
-        <li role="option" class="theme-option" data-theme="operator" aria-selected="true">
+        <li role="option" class="theme-option" data-theme="operator" aria-selected="false">
           <span class="theme-option__dot" data-dot="operator"></span>OPERATOR
         </li>
         <li role="option" class="theme-option" data-theme="terminal" aria-selected="false">
@@ -151,7 +151,7 @@
           if (e.key === "Escape") closeMenu();
         });
 
-        var saved = localStorage.getItem("theme") || "operator";
+        var saved = localStorage.getItem("theme") || "neon";
         if (CANVAS_THEMES[saved]) applyTheme(saved);
       })();
     </script>
