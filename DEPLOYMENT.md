@@ -8,7 +8,48 @@ gh repo create linearza/www --public --source=. --remote=origin --push
 
 ## 2. VPS — nginx config
 
+The SSL cert must exist before nginx can load an HTTPS block. Bootstrap in two steps.
+
+**Step 2a — HTTP-only config to allow Certbot's ACME challenge:**
+
 Create `/etc/nginx/sites-available/linear.co.za`:
+
+```nginx
+server {
+    listen 80;
+    server_name linear.co.za www.linear.co.za;
+    root /var/www/linear;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+```
+
+Enable and reload:
+
+```bash
+sudo mkdir -p /var/www/linear
+sudo ln -s /etc/nginx/sites-available/linear.co.za /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+## 3. SSL certificate
+
+Add the DNS A record in Cloudflare first (grey cloud, DNS-only), then:
+
+```bash
+sudo certbot --nginx -d linear.co.za -d www.linear.co.za
+```
+
+Certbot handles the ACME challenge over HTTP, issues the cert, and rewrites the nginx config to add the HTTPS block and HTTP→HTTPS redirect automatically. Reload nginx after:
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+The resulting config will look roughly like:
 
 ```nginx
 server {
@@ -32,31 +73,8 @@ server {
     location / {
         try_files $uri $uri/ =404;
     }
-
-    # Redirect www → apex
-    if ($host = www.linear.co.za) {
-        return 301 https://linear.co.za$request_uri;
-    }
 }
 ```
-
-Enable it:
-
-```bash
-sudo mkdir -p /var/www/linear
-sudo ln -s /etc/nginx/sites-available/linear.co.za /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-## 3. SSL certificate
-
-Add the DNS A record in Cloudflare first (grey cloud, DNS-only), then:
-
-```bash
-sudo certbot --nginx -d linear.co.za -d www.linear.co.za
-```
-
-Certbot will patch the nginx config automatically. Reload nginx after.
 
 ## 4. GitHub Actions secrets
 
