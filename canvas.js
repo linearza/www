@@ -1,17 +1,15 @@
 (function () {
-  const canvas = document.getElementById("circuit");
-  const ctx = canvas.getContext("2d");
+  var canvas = document.getElementById("circuit");
+  var ctx = canvas.getContext("2d");
 
-  const CYAN = "rgba(0, 212, 255,";
-  const MAGENTA = "rgba(255, 0, 128,";
-  const LIME = "rgba(0, 255, 136,";
-  const COLORS = [CYAN, MAGENTA, LIME];
+  var COLORS = ["rgba(0, 212, 255,", "rgba(255, 0, 128,", "rgba(0, 255, 136,"];
+  var GLOW = "rgba(255, 182, 39,";
 
-  const CONNECT_DIST = 140;
-  const NODE_COUNT = 48;
+  var CONNECT_DIST = 140;
+  var NODE_COUNT = 48;
 
-  let nodes = [];
-  let animId;
+  var nodes = [];
+  var animId;
 
   function buildNodes(w, h) {
     return Array.from({ length: NODE_COUNT }, function () {
@@ -36,12 +34,11 @@
   }
 
   function draw(t) {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    var w = window.innerWidth;
+    var h = window.innerHeight;
 
     ctx.clearRect(0, 0, w, h);
 
-    // Update nodes
     for (var i = 0; i < nodes.length; i++) {
       var node = nodes[i];
       node.x += node.vx;
@@ -51,7 +48,6 @@
       node.pulsePhase += 0.02;
     }
 
-    // Draw edges
     for (var a = 0; a < nodes.length; a++) {
       for (var b = a + 1; b < nodes.length; b++) {
         var na = nodes[a];
@@ -72,18 +68,16 @@
       }
     }
 
-    // Redemption glow — warm light from top-right
     var glowX = w * 0.82;
     var glowY = h * 0.12;
     var glowPulse = 0.7 + 0.3 * Math.sin(t * 0.0008);
     var grad = ctx.createRadialGradient(glowX, glowY, 0, glowX, glowY, w * 0.35);
-    grad.addColorStop(0, "rgba(255, 182, 39, " + 0.18 * glowPulse + ")");
-    grad.addColorStop(0.5, "rgba(255, 182, 39, " + 0.06 * glowPulse + ")");
-    grad.addColorStop(1, "rgba(255, 182, 39, 0)");
+    grad.addColorStop(0, GLOW + (0.18 * glowPulse) + ")");
+    grad.addColorStop(0.5, GLOW + (0.06 * glowPulse) + ")");
+    grad.addColorStop(1, GLOW + "0)");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
-    // Draw nodes
     for (var n = 0; n < nodes.length; n++) {
       var nd = nodes[n];
       var pulse = 0.5 + 0.5 * Math.sin(nd.pulsePhase + t * 0.001);
@@ -104,4 +98,14 @@
   });
 
   animId = requestAnimationFrame(draw);
+
+  window.canvasTheme = {
+    set: function (colors, glow) {
+      COLORS = colors;
+      GLOW = glow;
+      for (var i = 0; i < nodes.length; i++) {
+        nodes[i].color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      }
+    },
+  };
 })();

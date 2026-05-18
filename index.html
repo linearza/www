@@ -12,11 +12,44 @@
       rel="stylesheet"
     />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <script>
+      (function () {
+        var t = localStorage.getItem("theme") || "operator";
+        if (t !== "neon") document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
     <link rel="stylesheet" href="style.css" />
     <title>Linear — Staff Engineer</title>
   </head>
   <body>
     <canvas id="circuit" aria-hidden="true"></canvas>
+
+    <div class="theme-picker">
+      <button class="theme-picker__btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Switch theme">
+        <!-- half-circle contrast icon -->
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.25"/>
+          <path d="M8 2 A6 6 0 0 0 8 14 Z" fill="currentColor"/>
+        </svg>
+      </button>
+      <ul class="theme-picker__menu" role="listbox" aria-label="Color theme" hidden>
+        <li role="option" class="theme-option" data-theme="neon"     aria-selected="false">
+          <span class="theme-option__dot" data-dot="neon"></span>NEON GRID
+        </li>
+        <li role="option" class="theme-option" data-theme="operator" aria-selected="true">
+          <span class="theme-option__dot" data-dot="operator"></span>OPERATOR
+        </li>
+        <li role="option" class="theme-option" data-theme="terminal" aria-selected="false">
+          <span class="theme-option__dot" data-dot="terminal"></span>TERMINAL
+        </li>
+        <li role="option" class="theme-option" data-theme="graphite" aria-selected="false">
+          <span class="theme-option__dot" data-dot="graphite"></span>GRAPHITE
+        </li>
+        <li role="option" class="theme-option" data-theme="mono"     aria-selected="false">
+          <span class="theme-option__dot" data-dot="mono"></span>MONO
+        </li>
+      </ul>
+    </div>
 
     <main class="hero">
       <p class="section-label">// linearza</p>
@@ -69,6 +102,59 @@
     </section>
 
     <script src="canvas.js"></script>
+    <script>
+      (function () {
+        var CANVAS_THEMES = {
+          neon:     { colors: ["rgba(0,212,255,",   "rgba(255,0,128,",   "rgba(0,255,136,"],   glow: "rgba(255,182,39,"  },
+          operator: { colors: ["rgba(59,130,246,",  "rgba(99,102,241,",  "rgba(6,182,212,"],   glow: "rgba(59,130,246,"  },
+          terminal: { colors: ["rgba(0,255,65,",    "rgba(0,204,51,",    "rgba(204,255,0,"],    glow: "rgba(0,255,65,"    },
+          graphite: { colors: ["rgba(245,158,11,",  "rgba(249,115,22,",  "rgba(234,179,8,"],    glow: "rgba(245,158,11,"  },
+          mono:     { colors: ["rgba(161,161,170,", "rgba(212,212,216,", "rgba(82,82,91,"],     glow: "rgba(200,200,200," },
+        };
+
+        var toggleBtn = document.querySelector(".theme-picker__btn");
+        var menu      = document.querySelector(".theme-picker__menu");
+
+        function applyTheme(name) {
+          if (name === "neon") {
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            document.documentElement.setAttribute("data-theme", name);
+          }
+          document.querySelectorAll(".theme-option").forEach(function (opt) {
+            opt.setAttribute("aria-selected", String(opt.dataset.theme === name));
+          });
+          if (window.canvasTheme) {
+            var t = CANVAS_THEMES[name];
+            window.canvasTheme.set(t.colors, t.glow);
+          }
+          localStorage.setItem("theme", name);
+        }
+
+        function openMenu()  { menu.hidden = false; toggleBtn.setAttribute("aria-expanded", "true");  }
+        function closeMenu() { menu.hidden = true;  toggleBtn.setAttribute("aria-expanded", "false"); }
+
+        toggleBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          menu.hidden ? openMenu() : closeMenu();
+        });
+
+        menu.addEventListener("click", function (e) {
+          var opt = e.target.closest(".theme-option");
+          if (!opt) return;
+          applyTheme(opt.dataset.theme);
+          closeMenu();
+        });
+
+        document.addEventListener("click", closeMenu);
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeMenu();
+        });
+
+        var saved = localStorage.getItem("theme") || "operator";
+        if (CANVAS_THEMES[saved]) applyTheme(saved);
+      })();
+    </script>
     <script>
       (function () {
         const parts = ["hello", "@", "linear", ".", "co", ".", "za"];
