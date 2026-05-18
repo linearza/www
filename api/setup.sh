@@ -115,7 +115,57 @@ PYEOF
   ok "nginx /api/ proxy block added and nginx reloaded"
 fi
 
-# ── 5. sudoers (passwordless service restart for deploy) ──────────────────────
+# ── 5. www → non-www redirect ─────────────────────────────────────────────────
+if grep -q "# www-redirect" "$NGINX_CONF"; then
+  ok "www → non-www redirect already configured"
+else
+  info "Configuring www → non-www redirect..."
+  sudo python3 - "$NGINX_CONF" <<'PYEOF'
+import sys, re
+
+path = sys.argv[1]
+with open(path) as f:
+    lines = f.readlines()
+
+# Strip www.linear.co.za from the HTTPS server block's server_name so the
+# dedicated redirect block below becomes the sole handler for www requests.
+result = []
+in_https = False
+replaced = False
+for line in lines:
+    if not replaced and 'listen' in line and ':443' in line:
+        in_https = True
+    if in_https and not replaced and 'server_name' in line and 'www.linear.co.za' in line:
+        line = re.sub(r'\s+www\.linear\.co\.za\b', '', line)
+        line = re.sub(r'\bwww\.linear\.co\.za\s+', '', line)
+        replaced = True
+        in_https = False
+    result.append(line)
+
+www_block = (
+    "\n"
+    "server {\n"
+    "    listen 443 ssl; # www-redirect\n"
+    "    server_name www.linear.co.za;\n"
+    "    ssl_certificate     /etc/letsencrypt/live/linear.co.za/fullchain.pem;\n"
+    "    ssl_certificate_key /etc/letsencrypt/live/linear.co.za/privkey.pem;\n"
+    "    include             /etc/letsencrypt/options-ssl-nginx.conf;\n"
+    "    ssl_dhparam         /etc/letsencrypt/ssl-dhparams.pem;\n"
+    "    return 301 https://linear.co.za$request_uri;\n"
+    "}\n"
+)
+
+with open(path, 'w') as f:
+    f.writelines(result)
+    f.write(www_block)
+PYEOF
+
+  sudo nginx -t || die "nginx config test failed — check $NGINX_CONF"
+  sudo systemctl reload nginx
+  ok "www → non-www redirect configured and nginx reloaded"
+fi
+
+# ── 6. sudoers (passwordless service restart for deploy) ──────────────────────
 SUDOERS_LINE="ubuntu ALL=(ALL) NOPASSWD: /bin/systemctl restart linear-api"
 
 if [ -f "$SUDOERS_FILE" ] && sudo grep -qF "$SUDOERS_LINE" "$SUDOERS_FILE"; then
