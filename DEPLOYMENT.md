@@ -76,26 +76,41 @@ server {
 }
 ```
 
-## 4. GitHub Actions secrets
+## 4. SSH deploy key
+
+Generate a dedicated key pair for this repo:
+
+```bash
+ssh-keygen -t ed25519 -C "deploy@linear.co.za-www" -f ~/.ssh/www_deploy_key -N ""
+```
+
+**Add the public key to the VPS** (as the deploy user, or via sudo):
+
+```bash
+cat ~/.ssh/www_deploy_key.pub
+# Append that line to /home/deployuser/.ssh/authorized_keys on the VPS
+```
+
+## 5. GitHub Actions secrets
 
 In the `linearza/www` repo settings → Secrets and variables → Actions, add:
 
 | Secret | Value |
 |--------|-------|
-| `VPS_SSH_KEY` | Private key for the deploy user (same key as profile repo) |
+| `WWW_DEPLOY_KEY` | Contents of `~/.ssh/www_deploy_key` (private key) |
 | `VPS_HOST` | Your VPS IP or hostname |
 | `VPS_USER` | Deploy user on the VPS |
 | `WWW_PATH` | `/var/www/linear` |
 
-## 5. Deploy user SSH access
+## 6. Deploy user directory permissions
 
-If the deploy key is already authorised on the VPS for the profile repo, no extra steps needed — same key, same user. Just confirm `/var/www/linear` is writable by the deploy user:
+Ensure `/var/www/linear` is writable by the deploy user:
 
 ```bash
 sudo chown -R deployuser:deployuser /var/www/linear
 ```
 
-## 6. First deploy
+## 7. First deploy
 
 Push to `master` — the Actions workflow triggers automatically. Check the run in the GitHub Actions tab. On success, `https://linear.co.za` serves the hero page.
 
