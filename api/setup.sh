@@ -116,35 +116,53 @@ PYEOF
 fi
 
 # ── 5. www → non-www redirect ─────────────────────────────────────────────────
-if grep -q "# www-redirect" "$NGINX_CONF"; then
-  ok "www → non-www redirect already configured"
-else
-  info "Configuring www → non-www redirect..."
-  sudo python3 - "$NGINX_CONF" <<'PYEOF'
+# The script is idempotent: it fixes the server_name and appends the redirect
+# block only when needed, regardless of directive order inside the server block.
+WWW_RESULT=$(sudo python3 - "$NGINX_CONF" <<'PYEOF'
 import sys, re
 
 path = sys.argv[1]
 with open(path) as f:
-    lines = f.readlines()
+    content = f.read()
 
-# Strip www.linear.co.za from the HTTPS server block's server_name so the
-# dedicated redirect block below becomes the sole handler for www requests.
-result = []
-in_https = False
-replaced = False
-for line in lines:
-    if not replaced and 'listen' in line and ':443' in line:
-        in_https = True
-    if in_https and not replaced and 'server_name' in line and 'www.linear.co.za' in line:
-        line = re.sub(r'\s+www\.linear\.co\.za\b', '', line)
-        line = re.sub(r'\bwww\.linear\.co\.za\s+', '', line)
-        replaced = True
-        in_https = False
-    result.append(line)
+def server_blocks(text):
+    """Yield (start, end) for each top-level server { } block."""
+    i = 0
+    while True:
+        m = re.search(r'\bserver\s*\{', text[i:])
+        if not m:
+            break
+        start = i + m.start()
+        depth, j = 0, start
+        while j < len(text):
+            if text[j] == '{': depth += 1
+            elif text[j] == '}':
+                depth -= 1
+                if depth == 0:
+                    yield start, j + 1
+                    i = j + 1
+                    break
+            j += 1
+        else:
+            break
+
+parts, prev, changed = [], 0, False
+
+for start, end in server_blocks(content):
+    block = content[start:end]
+    # Target the HTTPS content block: has :443, has www, is not itself a redirect
+    if ':443' in block and 'www.linear.co.za' in block and 'return 301' not in block:
+        new_block = re.sub(r'(\bserver_name\b[^;]*?)\s+www\.linear\.co\.za\b', r'\1', block)
+        if new_block != block:
+            block, changed = new_block, True
+    parts += [content[prev:start], block]
+    prev = end
+
+parts.append(content[prev:])
+content = ''.join(parts)
 
 www_block = (
-    "\n"
-    "server {\n"
+    "\nserver {\n"
     "    listen 443 ssl; # www-redirect\n"
     "    server_name www.linear.co.za;\n"
     "    ssl_certificate     /etc/letsencrypt/live/linear.co.za/fullchain.pem;\n"
@@ -155,14 +173,25 @@ www_block = (
     "}\n"
 )
 
-with open(path, 'w') as f:
-    f.writelines(result)
-    f.write(www_block)
-PYEOF
+if '# www-redirect' not in content:
+    content += www_block
+    changed = True
 
+if changed:
+    with open(path, 'w') as f:
+        f.write(content)
+    print("changed")
+else:
+    print("ok")
+PYEOF
+)
+
+if [ "$WWW_RESULT" = "changed" ]; then
   sudo nginx -t || die "nginx config test failed — check $NGINX_CONF"
   sudo systemctl reload nginx
   ok "www → non-www redirect configured and nginx reloaded"
+else
+  ok "www → non-www redirect already configured"
 fi
 
 # ── 6. sudoers (passwordless service restart for deploy) ──────────────────────
