@@ -25,5 +25,5 @@ jobs:
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.WWW_PATH }}"
           ssh -i ~/.ssh/deploy_key \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
-            "sudo systemctl restart linear-api"
+            "bash ${{ secrets.WWW_PATH }}/api/setup.sh"
           rm -f ~/.ssh/deploy_key
