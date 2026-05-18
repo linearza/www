@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Staff engineer with 15+ years building software." />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Linear — Staff Engineer</title>
+  </head>
+  <body>
+    <canvas id="circuit" aria-hidden="true"></canvas>
+
+    <main class="hero">
+      <p class="section-label">// linearza</p>
+      <h1 class="hero__name" data-text="Linear">Linear</h1>
+      <p class="hero__title">Staff Engineer</p>
+      <p class="hero__sub">
+        15+ years building software. Currently navigating the grid —
+        <em>watching for the dawn.</em>
+      </p>
+      <a id="contact-btn" href="#" class="contact-btn">
+        <span>Get in touch</span>
+        <span aria-hidden="true" class="contact-btn__arrow">→</span>
+      </a>
+    </main>
+
+    <script src="canvas.js"></script>
+    <script>
+      (function () {
+        const parts = ["hello", "@", "linear", ".", "co", ".", "za"];
+        const btn = document.getElementById("contact-btn");
+        btn.href = "mailto:" + parts.join("");
+      })();
+    </script>
+  </body>
+</html>
