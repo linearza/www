@@ -225,7 +225,10 @@
               .join("");
           })
           .catch(function () {
-            list.innerHTML = '<span class="tag">Projects not available.</span>';
+            list.innerHTML =
+              '<span class="tag">Projects not available. ' +
+              '<a href="https://www.githubstatus.com" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;">Is GitHub down?</a>' +
+              '</span>';
           });
       })();
     </script>
@@ -273,7 +276,10 @@
               .join("");
           })
           .catch(function () {
-            grid.innerHTML = '<li><span class="tag">Stars not available.</span></li>';
+            grid.innerHTML =
+              '<li><span class="tag">Stars not available. ' +
+              '<a href="https://www.githubstatus.com" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;">Is GitHub down?</a>' +
+              '</span></li>';
           });
       })();
     </script>
