@@ -114,72 +114,17 @@ sudo chown -R ubuntu:ubuntu /var/www/linear
 
 Push to `master` — the Actions workflow triggers automatically. Check the run in the GitHub Actions tab. On success, `https://linear.co.za` serves the hero page.
 
-## 8. GitHub API proxy
+## 8. Server config (converge)
 
-> **Unused since 2.0.0.** The homepage no longer calls the proxy, but it is still installed and served by `api/setup.sh`. It is due to be removed.
+Every deploy copies `deploy/converge.sh` to the VPS, runs it, and deletes it. It is never published to the web root. The script is idempotent and:
 
-The site fetches `/api/repos` and `/api/stars` via a small Node.js proxy that attaches a GitHub token server-side. This keeps the token out of the browser and enables private repo access.
+- removes the retired GitHub API proxy, if present: the `linear-api` systemd service, `/etc/sudoers.d/linear-api`, the token file `/etc/linear/env`, and the `/api/` location in the nginx config;
+- removes a stale `DEPLOYMENT.md` from the web root (rsync excludes `*.md`, so `--delete` won't);
+- keeps the www → non-www redirect configured;
+- tests and reloads nginx only when the config changed;
+- fails the deploy if `/api/repos` still returns 200.
 
-### 8a — Install Node.js (if not already present)
-
-```bash
-curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-sudo apt-get install -y nodejs
-```
-
-### 8b — Create the token env file
-
-Create `/etc/linear/env` (readable only by root and the deploy user):
-
-```bash
-sudo mkdir -p /etc/linear
-sudo sh -c 'echo "GITHUB_TOKEN=ghp_your_token_here" > /etc/linear/env'
-sudo chmod 640 /etc/linear/env
-sudo chown root:ubuntu /etc/linear/env
-```
-
-Generate the token at GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens. Grant it **read-only** access to your repositories (Contents + Metadata).
-
-### 8c — Install and enable the systemd service
-
-```bash
-sudo cp /var/www/linear/api/linear-api.service /etc/systemd/system/linear-api.service
-# Edit User= in the service file if your deploy user differs from "ubuntu"
-sudo systemctl daemon-reload
-sudo systemctl enable linear-api
-sudo systemctl start linear-api
-sudo systemctl status linear-api
-```
-
-### 8d — Allow the deploy user to restart the service without a password
-
-```bash
-sudo visudo
-```
-
-Add this line:
-
-```
-ubuntu ALL=(ALL) NOPASSWD: /bin/systemctl restart linear-api
-```
-
-### 8e — Add the nginx proxy location
-
-In the HTTPS server block (inside `/etc/nginx/sites-available/linear.co.za`), add before the closing `}`:
-
-```nginx
-location /api/ {
-    proxy_pass http://127.0.0.1:47291/;
-    proxy_set_header Host $host;
-    proxy_read_timeout 10s;
-}
-```
-
-Then reload nginx:
-
-```bash
-sudo nginx -t && sudo systemctl reload nginx
-```
+The deploy user needs passwordless `sudo` for `systemctl`, `rm`, `python3` and `nginx`.
 
 ## Local development
 
@@ -190,45 +135,6 @@ The page is a single self-contained `index.html` (inline CSS and JS, fonts from 
 ### Checks
 
 Run `./scripts/check.sh` before opening a PR. CI runs it on every pull request and again before each deploy. It verifies `noindex`, `robots.txt`, that no plaintext email address or phone number is published, and that local `src`/`href` targets exist. Names, employers and places to block go in an untracked `.privacy-denylist` file locally (one term per line) and in the `PRIVACY_DENYLIST` repository secret for CI.
-
-### API proxy (legacy)
-
-Only needed if you are working on the unused proxy itself.
-
-### With the API proxy
-
-**Step 1 — Create a local env file:**
-
-```bash
-mkdir -p api
-echo "GITHUB_TOKEN=ghp_your_token_here" > api/.env.local
-```
-
-**Step 2 — Start the proxy:**
-
-```bash
-PORT=47291 GITHUB_TOKEN=$(cat api/.env.local | cut -d= -f2) node api/server.js
-```
-
-Or export from your shell profile:
-
-```bash
-export GITHUB_TOKEN=ghp_your_token_here
-node api/server.js
-```
-
-**Step 3 — Serve the static files** (browsers block fetch to a different port from `file://`):
-
-```bash
-npx serve . -l 3000
-# or: python3 -m http.server 3000
-```
-
-Then open `http://localhost:3000`.
-
-> **Note:** The proxy binds to `127.0.0.1:47291`. nginx on the VPS rewrites `/api/` → `http://127.0.0.1:47291/`. Locally you either proxy through the same path (e.g. configure nginx/caddy) or temporarily patch the fetch URLs to hit port 47291 directly. The `npx serve` approach does not auto-proxy — the easiest local workaround is a one-liner with `http-server` + a reverse proxy, or just use the VPS to test API behaviour.
-
----
 
 ## When promoting to the full profile site
 
