@@ -116,6 +116,8 @@ Push to `master` — the Actions workflow triggers automatically. Check the run 
 
 ## 8. GitHub API proxy
 
+> **Unused since 2.0.0.** The homepage no longer calls the proxy, but it is still installed and served by `api/setup.sh`. It is due to be removed.
+
 The site fetches `/api/repos` and `/api/stars` via a small Node.js proxy that attaches a GitHub token server-side. This keeps the token out of the browser and enables private repo access.
 
 ### 8a — Install Node.js (if not already present)
@@ -183,9 +185,15 @@ sudo nginx -t && sudo systemctl reload nginx
 
 No build step — open `index.html` directly from the repo root.
 
-### Without the API proxy
+The page is a single self-contained `index.html` (inline CSS and JS, fonts from Google Fonts). It makes no API calls.
 
-The fetch calls to `/api/repos` and `/api/stars` will 404. The page degrades gracefully (shows "Projects not available." and "Stars not available."). This is fine for HTML/CSS work.
+### Checks
+
+Run `./scripts/check.sh` before opening a PR. CI runs it on every pull request and again before each deploy. It verifies `noindex`, `robots.txt`, that no plaintext email address or phone number is published, and that local `src`/`href` targets exist. Names, employers and places to block go in an untracked `.privacy-denylist` file locally (one term per line) and in the `PRIVACY_DENYLIST` repository secret for CI.
+
+### API proxy (legacy)
+
+Only needed if you are working on the unused proxy itself.
 
 ### With the API proxy
 
