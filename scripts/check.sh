@@ -21,7 +21,7 @@ grep -nE '(\+27|\b0)[0-9 ]{9,12}\b' $pages && err "phone number found"
 
 # Local src/href targets must exist
 for f in $pages; do
-  for ref in $(grep -oE '(src|href)="[^"#:]+"' "$f" | sed -E 's/^(src|href)="//; s/"$//'); do
+  for ref in $(grep -oE '(src|href)="[^"#:]+"' "$f" | sed -E 's/^(src|href)="//; s/"$//; s/[?].*$//'); do
     [ -e "$ref" ] || err "$f references missing file: $ref"
   done
 done
