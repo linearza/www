@@ -28,9 +28,13 @@ jobs:
             --exclude='.github' \
             --exclude='.gitignore' \
             --exclude='scripts' \
+            --exclude='deploy' \
             --exclude='*.md' \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.WWW_PATH }}"
+          # The converge script is copied in, run, and removed; it is never published
+          scp -i ~/.ssh/deploy_key deploy/converge.sh \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/linear-converge.sh"
           ssh -i ~/.ssh/deploy_key \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
-            "bash ${{ secrets.WWW_PATH }}/api/setup.sh"
+            "WWW_ROOT='${{ secrets.WWW_PATH }}' bash /tmp/linear-converge.sh; rc=\$?; rm -f /tmp/linear-converge.sh; exit \$rc"
           rm -f ~/.ssh/deploy_key
