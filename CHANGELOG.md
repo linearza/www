@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.2 — 2026-10-02
+
+- New favicon matching the wordmark: heavy "L" with the green square full stop on paper, with a dark-mode variant. The link is cache-busted (`?v=2`).
+- `scripts/check.sh` ignores query strings when checking local references.
+
 ## 2.0.1 — 2026-10-02
 
 - Removed the GitHub API proxy (`api/`) and `dev.js`. It served repository listings, including private ones, at `/api/repos`.
