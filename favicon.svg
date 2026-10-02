@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#0d0d1e"/>
-  <text x="5" y="25" font-family="'JetBrains Mono', 'Fira Code', monospace" font-weight="700" font-size="23" fill="#00d4ff">L</text>
+  <rect width="32" height="32" rx="4" fill="#16181a"/>
+  <path d="M9 6h4.5v16H22v4H9z" fill="#f4f1ea"/>
+  <circle cx="25" cy="24" r="2.4" fill="#6fbf92"/>
 </svg>
