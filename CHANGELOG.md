@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0 — 2026-10-20
+
+- New "Side projects" section between Products and Contact, with a nav entry: Twang, Moedim, Synkrisis, Imprint, Sliptrack and VPS Guard, each with a one-line stack. Live sites are linked; Imprint is tagged invite-only, and Sliptrack and VPS Guard are tagged private with a note on why.
+
 ## 2.0.2 — 2026-10-02
 
 - New favicon matching the wordmark: heavy "L" with the green square full stop on paper, with a dark-mode variant. The link is cache-busted (`?v=2`).
