@@ -80,8 +80,8 @@ section{padding-bottom:96px;scroll-margin-top:40px}
 .prod:first-of-type{border-top:2px solid var(--ink)}
 .prod:last-of-type{border-bottom:1px solid var(--rule)}
 .prod h3{margin:0;font-size:30px;font-weight:500;line-height:1.1;letter-spacing:-.01em}
-.prod .dom{align-self:center;font:500 13px var(--mono);text-decoration:none;color:var(--accent-ink);border-bottom:1px solid currentColor;padding-bottom:1px;white-space:nowrap}
-.prod .dom:hover{color:var(--ink)}
+.prod .dom,.sp .dom{align-self:center;font:500 13px var(--mono);text-decoration:none;color:var(--accent-ink);border-bottom:1px solid currentColor;padding-bottom:1px;white-space:nowrap}
+.prod .dom:hover,.sp .dom:hover{color:var(--ink)}
 .prod p{grid-column:1/-1;margin:6px 0 0;color:var(--ink-2);max-width:58ch}
 .prod .tech{grid-column:1/-1;margin-top:6px}
 .ledger .stk{display:block;margin-top:8px;font:400 12px/1.6 var(--mono);letter-spacing:.02em;color:var(--ink-2);opacity:.85}
@@ -91,6 +91,15 @@ section{padding-bottom:96px;scroll-margin-top:40px}
 .prod .when{align-self:center;font:500 13px var(--mono);color:var(--ink-2);white-space:nowrap}
 .stack{margin-top:56px}
 .stack p{margin:10px 0 0;font-size:16px;line-height:1.7;color:var(--ink-2)}
+.lede{margin:-16px 0 32px;color:var(--ink-2);max-width:56ch}
+.sp-list{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.sp{display:grid;grid-template-columns:1fr auto;gap:4px 24px;padding:22px 0;border-bottom:1px solid var(--rule)}
+.sp h3{margin:0;font-size:24px;font-weight:500;line-height:1.2;letter-spacing:-.005em}
+.sp .meta{align-self:center;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:flex-end}
+.sp .tag{display:inline-flex;gap:7px;align-items:center;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);border:1px solid var(--rule);padding:3px 8px;border-radius:2px;white-space:nowrap}
+.sp .tag::before{content:"";width:6px;height:6px;border:1.5px solid currentColor;border-radius:50%}
+.sp p{grid-column:1/-1;margin:4px 0 0;color:var(--ink-2);font-size:17px;line-height:1.55;max-width:60ch}
+.sp .stk{grid-column:1/-1;margin-top:8px;font:400 12px/1.6 var(--mono);letter-spacing:.02em;color:var(--ink-2);opacity:.85}
 footer{border-top:1px solid var(--rule);padding:24px 0 8px;font:400 12px var(--mono);color:var(--ink-2);letter-spacing:.04em}
 
 @media (max-width:900px){
@@ -119,6 +128,8 @@ footer{border-top:1px solid var(--rule);padding:24px 0 8px;font:400 12px var(--m
   .prod{grid-template-columns:1fr}
   .prod .dom,.prod .when{justify-self:start}
   .prod dl{grid-template-columns:52px 1fr}
+  .sp{grid-template-columns:1fr}
+  .sp .meta{justify-content:flex-start}
 }
 </style>
 </head>
@@ -138,6 +149,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0 8px;font:400 12px var(--m
           <li><a href="#capabilities">Capabilities</a></li>
           <li><a href="#experience">Experience</a></li>
           <li><a href="#products">Products</a></li>
+          <li><a href="#projects">Side projects</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
@@ -184,6 +196,19 @@ footer{border-top:1px solid var(--rule);padding:24px 0 8px;font:400 12px var(--m
         <span class="mono">Stack</span>
         <p>JavaScript, TypeScript, Ruby, CSS · Ember (since 2013), React, Svelte, htmx · Rails, Node/Fastify, Postgres, SQLite · Playwright, QUnit · OpenTelemetry · Claude Code, Cursor</p>
       </div>
+    </section>
+
+    <section id="projects" aria-labelledby="h-proj">
+      <div class="sec-label"><h2 id="h-proj">Side projects</h2></div>
+      <p class="lede">Built for fun, usually to try an idea or a stack I don't use at work.</p>
+      <ul class="sp-list">
+        <li class="sp"><h3>Moedim</h3><span class="meta"><a class="dom" href="https://moedim.linear.co.za" rel="noopener">moedim.linear.co.za ↗</a></span><p>A Hebrew calendar and moon-phase calculator. Phases are calculated astronomically, and feast days and Hebrew dates are derived from them.</p><span class="stk">React · TypeScript · Vite · PWA</span></li>
+        <li class="sp"><h3>Synkrisis</h3><span class="meta"><a class="dom" href="https://synkrisis.linear.co.za" rel="noopener">synkrisis.linear.co.za ↗</a></span><p>What 21 Christian traditions believe, compared side by side, topic by topic. Every claim cites the tradition's own confessional sources, and the content build fails on a missing citation, a source from the wrong tradition or an empty cell.</p><span class="stk">React · TypeScript · Zod-validated content build · Vitest · PWA</span></li>
+        <li class="sp"><h3>VPS Guard</h3><span class="meta"><span class="tag">Private by design</span></span><p>A management dashboard and setup wizard for Ubuntu and Debian servers that runs alongside the production app. It is never on the public internet: it listens only on localhost and is reached through an SSH tunnel. Commands run from a hard-coded allowlist without a shell, behind CSRF tokens, rate-limited login and a read-only viewer role.</p><span class="stk">Node · Express · EJS · Alpine.js · Tailwind · SQLite · WebSockets</span></li>
+        <li class="sp"><h3>Imprint</h3><span class="meta"><a class="dom" href="https://imprint.linear.co.za" rel="noopener">imprint.linear.co.za ↗</a><span class="tag">Invite only</span></span><p>A speed reader that shows text full-screen, one word at a time. Articles arrive from a bookmarklet, a paste box or an iOS Shortcut, so the server never fetches a URL itself, which rules out server-side request forgery entirely. Passkey sign-in; access is by request.</p><span class="stk">SvelteKit · SQLite · WebAuthn passkeys · Tailwind · Playwright</span></li>
+        <li class="sp"><h3>Twang</h3><span class="meta"><a class="dom" href="https://twang.linear.co.za" rel="noopener">twang.linear.co.za ↗</a></span><p>A guided tuner for nylon and steel-string guitars. It listens through your microphone, works out which string you're playing and moves on to the next once it locks. Installable and works offline.</p><span class="stk">React · Web Audio API autocorrelation · Vite · PWA</span></li>
+        <li class="sp"><h3>Sliptrack</h3><span class="meta"><span class="tag">Private</span></span><p>Photograph a till slip and get its line items in a spending dashboard. Two local models run through Ollama, one to read the text and one to turn it into structured data, so receipts never leave my own server. Kept private because it holds personal financial data.</p><span class="stk">Ruby · Sinatra · React · Chart.js · Ollama (GLM&#8209;OCR, Qwen) · SQLite · Docker</span></li>
+      </ul>
     </section>
 
     <section id="contact" aria-labelledby="h-con">
