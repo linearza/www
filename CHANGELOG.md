@@ -2,7 +2,7 @@
 
 ## 2.2.0 — 2026-10-24
 
-- Side projects are now a grid of cards, each with a 16:9 screenshot thumbnail that tilts slightly and straightens on hover. Private projects get a hatched placeholder instead of a screenshot.
+- Side projects are now a grid of cards, each with a 16:9 screenshot thumbnail that tilts slightly and straightens on hover. VPS Guard shows an unlinked screenshot; private projects without one get a hatched placeholder.
 - Added Sugar Rush, Stellenberg Sitter and React for Ember Engineers (linked to its GitHub repo).
 - New `scripts/shots.sh` captures thumbnails into `img/projects/` (Playwright with the installed Chrome, then `cwebp`).
 
