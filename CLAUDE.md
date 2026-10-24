@@ -23,5 +23,6 @@ Projects are cards in `<ul class="sp-list">` under `#projects` in `index.html`, 
    ```
    - **Private project** (no public URL): replace the `<a class="shot">` with `<div class="shot locked" aria-hidden="true"><b>Name</b><i>No screenshots</i></div>`, drop the domain link and add `<span class="tag">Private</span>` in `.meta`. Never screenshot private projects.
    - **Restricted access**: keep the link and add a tag, e.g. `<span class="tag">Invite only</span>`.
+   - **No hosted site, public repo**: link the GitHub repo with `GitHub ↗` as the link text. For the thumbnail, a repo's own banner or social preview often beats a screenshot; crop it to 16:10 and save it as 960×600 WebP (`magick in.png -gravity center -crop <w>x<h>+0+0 +repage -resize 960x600 out.webp`, plus `-filter point` for pixel art).
 4. **Copy rules**: no metrics, employer names or personal details; the site is brand-only. Plain, specific sentences, no marketing words.
 5. Run `scripts/check.sh`, view the page at desktop and phone widths, add a `CHANGELOG.md` entry, and open a PR.
