@@ -92,14 +92,24 @@ section{padding-bottom:96px;scroll-margin-top:40px}
 .stack{margin-top:56px}
 .stack p{margin:10px 0 0;font-size:16px;line-height:1.7;color:var(--ink-2)}
 .lede{margin:-16px 0 32px;color:var(--ink-2);max-width:56ch}
-.sp-list{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
-.sp{display:grid;grid-template-columns:1fr auto;gap:4px 24px;padding:22px 0;border-bottom:1px solid var(--rule)}
+.sp-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:48px 32px}
+.sp{display:flex;flex-direction:column;min-width:0}
+.sp .shot{display:block;position:relative;aspect-ratio:16/10;margin:0 0 18px;border:1px solid var(--ink);border-radius:3px;overflow:hidden;background:var(--paper-2);box-shadow:4px 4px 0 var(--rule);transform:rotate(var(--tilt,-.6deg));transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.sp:nth-child(even) .shot{--tilt:.6deg}
+.sp:nth-child(3n) .shot{--tilt:-.3deg}
+.sp .shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+a.shot:hover,a.shot:focus-visible{transform:rotate(0) translate(-2px,-4px);box-shadow:8px 10px 0 var(--accent)}
+.sp .shot.locked{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:repeating-linear-gradient(135deg,var(--paper-2) 0 9px,transparent 9px 18px),var(--paper)}
+.sp .locked b{font:900 clamp(34px,4vw,48px)/1 var(--display);text-transform:uppercase;letter-spacing:.01em;color:var(--ink);background:var(--paper);padding:4px 12px}
+.sp .locked i{font:500 11px var(--mono);font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);background:var(--paper);padding:2px 8px}
+.sp .hd{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 14px}
 .sp h3{margin:0;font-size:24px;font-weight:500;line-height:1.2;letter-spacing:-.005em}
-.sp .meta{align-self:center;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:flex-end}
+.sp .meta{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
 .sp .tag{display:inline-flex;gap:7px;align-items:center;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);border:1px solid var(--rule);padding:3px 8px;border-radius:2px;white-space:nowrap}
 .sp .tag::before{content:"";width:6px;height:6px;border:1.5px solid currentColor;border-radius:50%}
-.sp p{grid-column:1/-1;margin:4px 0 0;color:var(--ink-2);font-size:17px;line-height:1.55;max-width:60ch}
-.sp .stk{grid-column:1/-1;margin-top:8px;font:400 12px/1.6 var(--mono);letter-spacing:.02em;color:var(--ink-2);opacity:.85}
+.sp p{margin:10px 0 0;color:var(--ink-2);font-size:16px;line-height:1.55}
+.sp .stk{margin-top:auto;padding-top:12px;font:400 12px/1.6 var(--mono);letter-spacing:.02em;color:var(--ink-2);opacity:.85}
+@media (prefers-reduced-motion:reduce){.sp .shot{transition:none}}
 footer{border-top:1px solid var(--rule);padding:24px 0 8px;font:400 12px var(--mono);color:var(--ink-2);letter-spacing:.04em}
 
 @media (max-width:900px){
@@ -128,8 +138,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0 8px;font:400 12px var(--m
   .prod{grid-template-columns:1fr}
   .prod .dom,.prod .when{justify-self:start}
   .prod dl{grid-template-columns:52px 1fr}
-  .sp{grid-template-columns:1fr}
-  .sp .meta{justify-content:flex-start}
+  .sp-list{gap:44px 24px}
 }
 </style>
 </head>
@@ -202,12 +211,54 @@ footer{border-top:1px solid var(--rule);padding:24px 0 8px;font:400 12px var(--m
       <div class="sec-label"><h2 id="h-proj">Side projects</h2></div>
       <p class="lede">Built for fun, usually to try an idea or a stack I don't use at work.</p>
       <ul class="sp-list">
-        <li class="sp"><h3>Moedim</h3><span class="meta"><a class="dom" href="https://moedim.linear.co.za" rel="noopener">moedim.linear.co.za ↗</a></span><p>A Hebrew calendar and moon-phase calculator. Phases are calculated astronomically, and feast days and Hebrew dates are derived from them.</p><span class="stk">React · TypeScript · Vite · PWA</span></li>
-        <li class="sp"><h3>Synkrisis</h3><span class="meta"><a class="dom" href="https://synkrisis.linear.co.za" rel="noopener">synkrisis.linear.co.za ↗</a></span><p>What 21 Christian traditions believe, compared side by side, topic by topic. Every claim cites the tradition's own confessional sources, and the content build fails on a missing citation, a source from the wrong tradition or an empty cell.</p><span class="stk">React · TypeScript · Zod-validated content build · Vitest · PWA</span></li>
-        <li class="sp"><h3>VPS Guard</h3><span class="meta"><span class="tag">Private by design</span></span><p>A management dashboard and setup wizard for Ubuntu and Debian servers that runs alongside the production app. It is never on the public internet: it listens only on localhost and is reached through an SSH tunnel. Commands run from a hard-coded allowlist without a shell, behind CSRF tokens, rate-limited login and a read-only viewer role.</p><span class="stk">Node · Express · EJS · Alpine.js · Tailwind · SQLite · WebSockets</span></li>
-        <li class="sp"><h3>Imprint</h3><span class="meta"><a class="dom" href="https://imprint.linear.co.za" rel="noopener">imprint.linear.co.za ↗</a><span class="tag">Invite only</span></span><p>A speed reader that shows text full-screen, one word at a time. Articles arrive from a bookmarklet, a paste box or an iOS Shortcut, so the server never fetches a URL itself, which rules out server-side request forgery entirely. Passkey sign-in; access is by request.</p><span class="stk">SvelteKit · SQLite · WebAuthn passkeys · Tailwind · Playwright</span></li>
-        <li class="sp"><h3>Twang</h3><span class="meta"><a class="dom" href="https://twang.linear.co.za" rel="noopener">twang.linear.co.za ↗</a></span><p>A guided tuner for nylon and steel-string guitars. It listens through your microphone, works out which string you're playing and moves on to the next once it locks. Installable and works offline.</p><span class="stk">React · Web Audio API autocorrelation · Vite · PWA</span></li>
-        <li class="sp"><h3>Sliptrack</h3><span class="meta"><span class="tag">Private</span></span><p>Photograph a till slip and get its line items in a spending dashboard. Two local models run through Ollama, one to read the text and one to turn it into structured data, so receipts never leave my own server. Kept private because it holds personal financial data.</p><span class="stk">Ruby · Sinatra · React · Chart.js · Ollama (GLM&#8209;OCR, Qwen) · SQLite · Docker</span></li>
+        <li class="sp">
+          <a class="shot" href="https://sugarrush.linear.co.za" rel="noopener" tabindex="-1" aria-hidden="true"><img src="img/projects/sugarrush.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></a>
+          <div class="hd"><h3>Sugar Rush</h3><span class="meta"><a class="dom" href="https://sugarrush.linear.co.za" rel="noopener">sugarrush.linear.co.za ↗</a></span></div>
+          <p>A top-down 3D game about keeping one woman's blood sugar steady through a busy week. Eat real meals on time, see through foods that only look healthy, dodge colleagues with cake and get her to bed on time. Plays in the browser, or offline as a desktop app.</p>
+          <span class="stk">React Three Fiber · TypeScript · Electron · SQLite · Vitest · Playwright</span>
+        </li>
+        <li class="sp">
+          <a class="shot" href="https://sitter.linear.co.za" rel="noopener" tabindex="-1" aria-hidden="true"><img src="img/projects/sitter.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></a>
+          <div class="hd"><h3>Stellenberg Sitter</h3><span class="meta"><a class="dom" href="https://sitter.linear.co.za" rel="noopener">sitter.linear.co.za ↗</a></span></div>
+          <p>A booking app for a house sitter and dog walker. Customers pick a service and days on a live availability calendar and see the price as they go, with no account needed. The owner confirms from an installable app with push alerts, and customers pay by EFT or PayFast.</p>
+          <span class="stk">SvelteKit · Svelte 5 · SQLite · Web Push · Satori share images · Vitest</span>
+        </li>
+        <li class="sp">
+          <a class="shot" href="https://moedim.linear.co.za" rel="noopener" tabindex="-1" aria-hidden="true"><img src="img/projects/moedim.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></a>
+          <div class="hd"><h3>Moedim</h3><span class="meta"><a class="dom" href="https://moedim.linear.co.za" rel="noopener">moedim.linear.co.za ↗</a></span></div>
+          <p>A Hebrew calendar and moon-phase calculator. Phases are calculated astronomically, and feast days and Hebrew dates are derived from them.</p>
+          <span class="stk">React · TypeScript · Vite · PWA</span>
+        </li>
+        <li class="sp">
+          <a class="shot" href="https://synkrisis.linear.co.za" rel="noopener" tabindex="-1" aria-hidden="true"><img src="img/projects/synkrisis.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></a>
+          <div class="hd"><h3>Synkrisis</h3><span class="meta"><a class="dom" href="https://synkrisis.linear.co.za" rel="noopener">synkrisis.linear.co.za ↗</a></span></div>
+          <p>What 21 Christian traditions believe, compared side by side, topic by topic. Every claim cites the tradition's own confessional sources, and the content build fails on a missing citation, a source from the wrong tradition or an empty cell.</p>
+          <span class="stk">React · TypeScript · Zod-validated content build · Vitest · PWA</span>
+        </li>
+        <li class="sp">
+          <div class="shot locked" aria-hidden="true"><b>VPS Guard</b><i>No screenshots</i></div>
+          <div class="hd"><h3>VPS Guard</h3><span class="meta"><span class="tag">Private by design</span></span></div>
+          <p>A management dashboard and setup wizard for Ubuntu and Debian servers that runs alongside the production app. It is never on the public internet: it listens only on localhost and is reached through an SSH tunnel. Commands run from a hard-coded allowlist without a shell, behind CSRF tokens, rate-limited login and a read-only viewer role.</p>
+          <span class="stk">Node · Express · EJS · Alpine.js · Tailwind · SQLite · WebSockets</span>
+        </li>
+        <li class="sp">
+          <a class="shot" href="https://imprint.linear.co.za" rel="noopener" tabindex="-1" aria-hidden="true"><img src="img/projects/imprint.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></a>
+          <div class="hd"><h3>Imprint</h3><span class="meta"><a class="dom" href="https://imprint.linear.co.za" rel="noopener">imprint.linear.co.za ↗</a><span class="tag">Invite only</span></span></div>
+          <p>A speed reader that shows text full-screen, one word at a time. Articles arrive from a bookmarklet, a paste box or an iOS Shortcut, so the server never fetches a URL itself, which rules out server-side request forgery entirely. Passkey sign-in; access is by request.</p>
+          <span class="stk">SvelteKit · SQLite · WebAuthn passkeys · Tailwind · Playwright</span>
+        </li>
+        <li class="sp">
+          <a class="shot" href="https://twang.linear.co.za" rel="noopener" tabindex="-1" aria-hidden="true"><img src="img/projects/twang.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></a>
+          <div class="hd"><h3>Twang</h3><span class="meta"><a class="dom" href="https://twang.linear.co.za" rel="noopener">twang.linear.co.za ↗</a></span></div>
+          <p>A guided tuner for nylon and steel-string guitars. It listens through your microphone, works out which string you're playing and moves on to the next once it locks. Installable and works offline.</p>
+          <span class="stk">React · Web Audio API autocorrelation · Vite · PWA</span>
+        </li>
+        <li class="sp">
+          <div class="shot locked" aria-hidden="true"><b>Sliptrack</b><i>No screenshots</i></div>
+          <div class="hd"><h3>Sliptrack</h3><span class="meta"><span class="tag">Private</span></span></div>
+          <p>Photograph a till slip and get its line items in a spending dashboard. Two local models run through Ollama, one to read the text and one to turn it into structured data, so receipts never leave my own server. Kept private because it holds personal financial data.</p>
+          <span class="stk">Ruby · Sinatra · React · Chart.js · Ollama (GLM&#8209;OCR, Qwen) · SQLite · Docker</span>
+        </li>
       </ul>
     </section>
 
