@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0 — 2026-10-24
+
+- Side projects are now a grid of cards, each with a 16:9 screenshot thumbnail that tilts slightly and straightens on hover. VPS Guard shows an unlinked screenshot; private projects without one get a hatched placeholder.
+- Added Sugar Rush, Stellenberg Sitter and React for Ember Engineers (linked to its GitHub repo).
+- New `scripts/shots.sh` captures thumbnails into `img/projects/` (Playwright with the installed Chrome, then `cwebp`).
+
 ## 2.1.0 — 2026-10-20
 
 - New "Side projects" section between Products and Contact, with a nav entry: Moedim, Synkrisis, VPS Guard, Imprint, Twang and Sliptrack, each with a one-line stack. Live sites are linked; Imprint is tagged invite-only, and Sliptrack and VPS Guard are tagged private with a note on why.
