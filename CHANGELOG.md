@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0 — 2026-10-25
+
+- Added Gains to side projects.
+
 ## 2.2.0 — 2026-10-24
 
 - Side projects are now a grid of cards, each with a 16:9 screenshot thumbnail that tilts slightly and straightens on hover. VPS Guard shows an unlinked screenshot; private projects without one get a hatched placeholder.
