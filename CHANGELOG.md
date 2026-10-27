@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.1 — 2026-10-27
+
+- The Gains card mentions its bodyweight and cardio plans, sessions that fit the time you have, and live crew sessions.
+
 ## 2.3.0 — 2026-10-25
 
 - Added Gains to side projects.
